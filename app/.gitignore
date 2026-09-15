@@ -1,0 +1,17 @@
+__pycache__/
+../.pytest_cache/
+../.ruff_cache/
+*.py[cod]
+data/
+config/documents.json
+config/*.local.json
+documents/*.pdf
+**/*.pdf
+output/
+testing/
+tmp/
+qa/
+QA/
+.env
+.env.*
+!.env.example

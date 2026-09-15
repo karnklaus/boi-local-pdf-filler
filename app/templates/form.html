@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}กรอกข้อมูล - BOI{% endblock %}
+{% block content %}
+<section class="surface surface-main motion-fade">
+  {% if error %}<div class="alert" role="alert">{{error}}</div>{% endif %}
+
+  <form method="post" action="{{url_for('data_form')}}">
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    <div class="document-workspace">
+      <div class="document-tabs" role="tablist" aria-label="เอกสารที่เลือก">
+        <div class="document-tabs-heading"><span>เอกสารที่เลือก</span><span>{{documents|length}}</span></div>
+        {% for doc,doc_fields in document_fields %}
+        {% set tab_id = 'document-tab-' ~ doc.id %}
+        {% set panel_id = 'document-panel-' ~ doc.id %}
+        {% set is_complete = document_status.get(doc.id, false) %}
+        <button class="document-tab {% if loop.first %}is-active{% endif %}" type="button" role="tab" id="{{tab_id}}" aria-controls="{{panel_id}}" aria-selected="{{'true' if loop.first else 'false'}}" aria-label="{{doc.title}} - {{'กรอกข้อมูลครบแล้ว' if is_complete else 'กรอกข้อมูลยังไม่ครบ'}}" data-document-tab="{{panel_id}}" data-document-title="{{doc.title}}" tabindex="{{'0' if loop.first else '-1'}}">
+          <span class="document-tab-copy"><strong><span class="document-tab-status {% if is_complete %}is-complete{% else %}is-incomplete{% endif %}" data-document-status aria-hidden="true"></span>{{doc.title}}</strong></span>
+        </button>
+        {% endfor %}
+      </div>
+
+      <div class="document-panels">
+        {% for doc,doc_fields in document_fields %}
+        {% set tab_id = 'document-tab-' ~ doc.id %}
+        {% set panel_id = 'document-panel-' ~ doc.id %}
+        <section class="document-panel {% if loop.first %}is-active{% endif %}" id="{{panel_id}}" role="tabpanel" aria-labelledby="{{tab_id}}" data-document-panel {% if not loop.first %}hidden{% endif %}>
+          <div class="document-panel-header">
+            <div><span>เอกสาร {{'%02d'|format(loop.index)}}</span><h2>{{doc.title}}</h2></div>
+          </div>
+          <div class="document-fields">
+            {% for key,definition in doc_fields %}
+            {% set field_id = 'field-' ~ doc.id ~ '-' ~ key %}
+            {% set field_name = 'document__' ~ doc.id ~ '__' ~ key %}
+            {% set is_two_line = doc.id == 'change-visa' and key in ['address', 'expertise'] %}
+            <div class="document-field-row {% if definition.get('type')=='textarea' %}is-textarea{% endif %}{% if is_two_line %} is-two-line{% endif %}">
+              <div class="document-field-label"><label for="{{field_id}}">{{definition.get('label',key)}}</label></div>
+              <div class="document-field-control">
+                {% if definition.get('type')=='textarea' %}
+                  <textarea id="{{field_id}}" name="{{field_name}}" data-document-field data-shared-key="{{key}}" maxlength="{{field_max_length(definition)}}" {% if is_two_line %}rows="2"{% endif %} placeholder="{{definition.get('placeholder','')}}">{{data.get(key,'')}}</textarea>
+                {% elif definition.get('type')=='date' %}
+                  {% set native_date_id = 'native-' ~ field_id %}
+                  <div class="date-control">
+                    <input id="{{field_id}}" name="{{field_name}}" type="text" inputmode="numeric" pattern="[0-9/]*" data-document-field data-date-display data-date-native-target="{{native_date_id}}" data-shared-key="{{key}}" maxlength="{{field_max_length(definition)}}" value="{{thai_numeric_date(data.get(key,''))}}" placeholder="วว/ดด/พ.ศ." autocomplete="off">
+                    <button class="date-picker-trigger" type="button" data-date-trigger="{{native_date_id}}" aria-label="เลือกวันที่">เลือก</button>
+                    <input id="{{native_date_id}}" class="date-native" type="date" data-date-native value="{{date_input_value(data.get(key,''))}}" tabindex="-1" aria-hidden="true">
+                  </div>
+            {% elif definition.get('type')=='number' %}
+                  <input id="{{field_id}}" name="{{field_name}}" type="number" inputmode="numeric" pattern="[0-9]*" min="0" step="1" data-document-field data-number-only data-shared-key="{{key}}" maxlength="{{field_max_length(definition)}}" value="{{data.get(key,'')}}" placeholder="{{definition.get('placeholder','')}}">
+            {% else %}
+                  <input id="{{field_id}}" name="{{field_name}}" data-document-field data-shared-key="{{key}}" maxlength="{{field_max_length(definition)}}" value="{{data.get(key,'')}}" placeholder="{{definition.get('placeholder','')}}">
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </section>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="action-bar">
+      <a class="link" href="{{url_for('select_documents_page')}}"><span aria-hidden="true">←</span> เลือกเอกสาร</a>
+      <button class="btn" type="submit">ถัดไป: ตรวจสอบ <span aria-hidden="true">→</span></button>
+    </div>
+  </form>
+</section>
+{% endblock %}

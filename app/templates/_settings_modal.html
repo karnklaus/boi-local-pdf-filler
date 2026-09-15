@@ -1,0 +1,59 @@
+<div class="modal" id="settings-modal" hidden>
+  <div class="modal-backdrop" data-settings-close></div>
+  <section class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">WORKSPACE SETTINGS</p>
+        <h2 id="settings-modal-title">การตั้งค่า</h2>
+      </div>
+      <button class="modal-close" type="button" data-settings-close aria-label="ปิดหน้าต่างตั้งค่า"><span aria-hidden="true">×</span></button>
+    </div>
+    <form method="post" action="{{url_for('settings_page')}}">
+      <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+      <div class="modal-body">
+        <div class="modal-fields">
+          <div class="field">
+            <div class="field-label-row"><label class="setting-label" for="modal-font-name"><span class="setting-label-icon" aria-hidden="true">Aa</span><span>ฟอนต์</span></label></div>
+            <select id="modal-font-name" name="font_name">
+              {% for key,option in font_options.items() %}<option value="{{key}}" {% if settings.font_name==key %}selected{% endif %}>{{option[0]}}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="field">
+            <div class="field-label-row"><label class="setting-label" for="modal-font-size"><span class="setting-label-icon" aria-hidden="true">↕</span><span>ขนาดฟอนต์</span></label></div>
+            <div class="input-suffix"><input id="modal-font-size" name="font_size" type="number" min="7" max="24" step="0.5" value="{{settings.font_size}}"><span>pt</span></div>
+          </div>
+        </div>
+        <div class="settings-preferences">
+          <fieldset class="settings-choice">
+            <legend class="setting-label"><span class="setting-label-icon" aria-hidden="true">●</span><span>สีหลักของระบบ</span></legend>
+            <div class="accent-options">
+              {% for key, option in accent_options.items() %}
+              <label class="accent-option">
+                <input type="radio" name="accent" value="{{key}}" {% if settings.accent == key %}checked{% endif %}>
+                <span class="accent-swatch accent-swatch-{{key}}" aria-hidden="true"></span>
+                <span>{{option.label}}</span>
+              </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+          <fieldset class="settings-choice theme-choice">
+            <legend class="setting-label"><span class="setting-label-icon" aria-hidden="true">◐</span><span>โหมดสี</span></legend>
+            <div class="theme-options">
+              {% for key, label in theme_options.items() %}
+              <label class="theme-option">
+                <input type="radio" name="theme" value="{{key}}" {% if settings.theme == key %}checked{% endif %}>
+                <span class="theme-option-content"><span class="theme-option-icon" aria-hidden="true">{% if key == 'light' %}☼{% elif key == 'dark' %}☾{% else %}▣{% endif %}</span><span>{{label}}</span></span>
+              </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        </div>
+      </div>
+      <input type="hidden" name="next" value="{{request.path}}">
+      <div class="modal-footer">
+        <button class="modal-cancel" type="button" data-settings-close>ยกเลิก</button>
+        <button class="btn" type="submit">บันทึกการตั้งค่า</button>
+      </div>
+    </form>
+  </section>
+</div>

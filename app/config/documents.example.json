@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "fields": {
+    "company": {"label": "ชื่อบริษัท", "type": "text", "placeholder": "", "required": false, "order": 10},
+    "letter_date": {"label": "วันที่เอกสาร", "type": "date", "placeholder": "", "required": false, "order": 20},
+    "business_start": {"label": "วันที่เริ่มประกอบธุรกิจ", "type": "date", "placeholder": "", "required": false, "order": 30},
+    "business_type": {"label": "ประเภทธุรกิจ", "type": "text", "placeholder": "", "required": false, "order": 40},
+    "address": {"label": "ที่อยู่บริษัท", "type": "textarea", "placeholder": "", "required": false, "order": 50},
+    "foreigner_name": {"label": "ชื่อผู้ยื่นคำขอ", "type": "text", "placeholder": "", "required": false, "order": 60},
+    "age": {"label": "อายุ", "type": "number", "placeholder": "", "required": false, "order": 70},
+    "nationality": {"label": "สัญชาติ", "type": "text", "placeholder": "", "required": false, "order": 80},
+    "position": {"label": "ตำแหน่ง", "type": "text", "placeholder": "", "required": false, "order": 90},
+    "expertise": {"label": "ความรู้ความสามารถ", "type": "textarea", "placeholder": "", "required": false, "order": 100},
+    "visa_from": {"label": "ประเภทวีซ่า", "type": "text", "placeholder": "", "required": false, "order": 110},
+    "reason": {"label": "เหตุผล", "type": "textarea", "placeholder": "", "required": false, "order": 120},
+    "signer": {"label": "ชื่อผู้ลงนาม", "type": "text", "placeholder": "", "required": false, "order": 130}
+  },
+  "documents": []
+}

@@ -1,0 +1,14 @@
+<nav class="progress" aria-label="ขั้นตอนการจัดทำเอกสาร">
+  <div class="progress-track" aria-hidden="true"><span class="progress-track-fill progress-fill-step-{{active_step or 1}}"></span></div>
+  {% for step in progress_steps %}
+    {% if step.href and not step.current %}
+      <a class="progress-item {% if step.complete %}complete{% endif %}" href="{{step.href}}" aria-label="ไปขั้นตอนที่ {{step.number}} {{step.label}}">
+        <span class="progress-dot">{{step.number}}</span><span class="progress-label">{{step.label}}</span>
+      </a>
+    {% else %}
+      <span class="progress-item {% if step.current %}current{% elif step.complete %}complete{% endif %}" {% if step.current %}aria-current="step"{% else %}aria-disabled="true"{% endif %}>
+        <span class="progress-dot">{{step.number}}</span><span class="progress-label">{{step.label}}</span>
+      </span>
+    {% endif %}
+  {% endfor %}
+</nav>

@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: app/requirements.txt
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt ruff bandit pip-audit
+
+      - name: Validate Python and JavaScript
+        run: |
+          python -B -c "import ast, pathlib; [ast.parse(p.read_text(encoding='utf-8')) for p in pathlib.Path('.').rglob('*.py')]"
+          node --check static/app.js
+          python -m json.tool config/documents.example.json > /dev/null
+
+      - name: Run tests
+        run: python -B -m unittest discover -s tests -v
+
+      - name: Run static security checks
+        run: |
+          ruff check .
+          bandit -q -r . -x tests
+          pip-audit -r requirements.txt

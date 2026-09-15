@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}เลือกเอกสาร - BOI{% endblock %}
+{% block content %}
+<section class="surface surface-main motion-fade">
+  <div class="section-heading section-heading-simple">
+    <div>
+      <h1 class="title">เลือกเอกสาร</h1>
+      <p class="lede">เลือกเอกสารที่ต้องการจัดทำ ข้อมูลที่ใช้ร่วมกันจะกรอกเพียงครั้งเดียว</p>
+    </div>
+  </div>
+
+  {% if error %}<div class="alert" role="alert">{{error}}</div>{% endif %}
+  {% if config_errors %}<div class="config-error" role="alert"><strong>พบข้อผิดพลาดในคลังเอกสาร</strong><br>{{config_errors|join('\n')}}</div>{% endif %}
+
+  <form method="post" action="{{url_for('choose_documents')}}">
+    <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+    <div class="list-heading"><span>เอกสารในคลัง</span><span>{{documents|length}} รายการ</span></div>
+    <div class="doc-list">
+      {% for doc in documents %}
+      <label class="doc-option">
+        <input type="checkbox" name="documents" value="{{doc.id}}" {% if doc.id in selected_ids %}checked{% endif %}>
+        <span class="doc-index">{{'%02d'|format(loop.index)}}</span>
+        <span class="doc-copy"><strong>{{doc.title}}</strong><span>{{doc.description}}</span></span>
+        <span class="doc-check" aria-hidden="true"></span>
+      </label>
+      {% endfor %}
+    </div>
+    <div class="action-bar action-bar-end">
+      <button class="btn" type="submit">ถัดไป: กรอกข้อมูล <span aria-hidden="true">→</span></button>
+    </div>
+  </form>
+</section>
+{% endblock %}

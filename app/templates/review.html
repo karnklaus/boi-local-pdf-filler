@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}ตรวจสอบ - BOI{% endblock %}
+{% block content %}
+<section class="surface surface-main motion-fade review-surface">
+  <div class="section-heading section-heading-simple">
+    <div>
+      <h1 class="title">ตรวจสอบข้อมูล</h1>
+    </div>
+  </div>
+
+  <div class="review-tools">
+    <label class="review-search" for="review-search">
+      <span class="review-search-icon" aria-hidden="true">⌕</span>
+      <span class="sr-only">ค้นหาเอกสาร</span>
+      <input id="review-search" type="search" placeholder="ค้นหาเอกสาร" autocomplete="off" data-review-search>
+    </label>
+    <div class="review-filters" role="group" aria-label="กรองสถานะเอกสาร">
+      <button class="review-filter is-active" type="button" data-review-filter="all" aria-pressed="true">ทั้งหมด</button>
+      <button class="review-filter" type="button" data-review-filter="incomplete" aria-pressed="false">ยังไม่ครบ</button>
+      <button class="review-filter" type="button" data-review-filter="complete" aria-pressed="false">ครบแล้ว</button>
+    </div>
+  </div>
+
+  <div class="review-center">
+    <aside class="review-document-list-pane" aria-label="รายการเอกสาร">
+      <div class="review-list-heading"><span>เอกสารที่เลือก</span><span>{{documents|length}}</span></div>
+      <div class="review-list-scroll">
+        <ul class="review-document-list">
+          {% for doc,doc_fields in document_fields %}
+          {% set is_complete = document_status.get(doc.id, false) %}
+          {% set panel_id = 'review-panel-' ~ doc.id %}
+          {% set item_id = 'review-document-' ~ doc.id %}
+          <li class="review-document-item" data-review-document data-review-status="{{'complete' if is_complete else 'incomplete'}}" data-review-title="{{doc.title}}">
+            <button class="review-document-button {% if loop.first %}is-active{% endif %}" type="button" id="{{item_id}}" aria-controls="{{panel_id}}" aria-pressed="{{'true' if loop.first else 'false'}}" aria-label="{{doc.title}} - {{'ข้อมูลพร้อมตรวจสอบ' if is_complete else 'มีข้อมูลว่าง'}}" data-review-document-button tabindex="{{'0' if loop.first else '-1'}}">
+              <span class="review-status-dot {% if is_complete %}is-complete{% endif %}" aria-hidden="true"></span>
+              <span class="review-document-copy"><strong>{{doc.title}}</strong></span>
+            </button>
+          </li>
+          {% endfor %}
+        </ul>
+        <p class="review-filter-empty" data-review-empty hidden>ไม่พบเอกสารที่ค้นหา</p>
+      </div>
+    </aside>
+
+    <div class="review-details" aria-live="polite">
+      {% for doc,doc_fields in document_fields %}
+      {% set is_complete = document_status.get(doc.id, false) %}
+      {% set item_id = 'review-document-' ~ doc.id %}
+      {% set panel_id = 'review-panel-' ~ doc.id %}
+      <section class="review-detail-panel {% if loop.first %}is-active{% endif %}" id="{{panel_id}}" aria-labelledby="{{item_id}}" data-review-panel {% if not loop.first %}hidden{% endif %}>
+        <div class="review-detail-header">
+          <div>
+            <span class="review-detail-overline">เอกสาร {{'%02d'|format(loop.index)}}</span>
+            <h2>{{doc.title}}</h2>
+          </div>
+          <a class="review-edit-link" href="{{url_for('data_form')}}#document-tab-{{doc.id}}">แก้ไขข้อมูล</a>
+        </div>
+
+        <div class="review-detail-state {% if is_complete %}is-complete{% endif %}">
+          <span class="review-status-dot {% if is_complete %}is-complete{% endif %}" aria-hidden="true"></span>
+          <span>{{'ข้อมูลพร้อมตรวจสอบ' if is_complete else 'มีข้อมูลว่าง'}}</span>
+        </div>
+
+        <div class="review-data-list">
+          {% for key,definition in doc_fields %}
+          {% set display_value = format_value(data.get(key, ''), key) %}
+          <div class="review-data-row {% if not display_value %}is-empty{% endif %}">
+            <div class="review-data-label">{{definition.get('label',key)}}</div>
+            <div class="review-data-value">{% if display_value %}{{display_value}}{% else %}<span class="review-empty">เว้นว่าง</span>{% endif %}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="action-bar">
+    <a class="link" href="{{url_for('data_form')}}">แก้ไขข้อมูล</a>
+    <form method="post" action="{{url_for('review')}}">
+      <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+      <button class="btn success" type="submit">ไป Export</button>
+    </form>
+  </div>
+</section>
+{% endblock %}

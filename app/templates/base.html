@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="th" data-theme="{{'light' if settings.theme == 'auto' else settings.theme}}" data-theme-preference="{{settings.theme}}" data-accent="{{settings.accent}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{% block title %}BOI Document Studio{% endblock %}</title>
+  <link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">ข้ามไปยังเนื้อหา</a>
+  <header class="app-header">
+    <div class="header-inner">
+      <a class="brand" href="{{url_for('select_documents_page')}}">จัดทำเอกสาร BOI</a>
+      <div class="header-tools">
+        {% if session.get('case_data') or session.get('selected_documents') %}
+        <form class="clear-session-form" method="post" action="{{url_for('clear_case')}}" data-clear-session-form>
+          <input type="hidden" name="csrf_token" value="{{csrf_token()}}">
+          <button class="clear-session-trigger" type="submit">ล้างข้อมูล</button>
+        </form>
+        {% endif %}
+        <button class="settings-trigger" type="button" data-settings-open aria-controls="settings-modal" aria-expanded="false" aria-label="เปิดตั้งค่า" title="ตั้งค่า">
+          <span class="gear-icon" aria-hidden="true">⚙</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main id="main-content" class="page-shell">
+    {% if active_step %}{% include '_progress.html' %}{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  {% include '_settings_modal.html' %}
+  <script src="{{url_for('static',filename='app.js')}}" defer></script>
+</body>
+</html>

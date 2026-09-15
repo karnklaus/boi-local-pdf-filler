@@ -1,0 +1,31 @@
+# Python cache and local tooling
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+*.py[cod]
+.venv/
+
+# Local secrets and server-side session data
+.env
+.env.*
+!.env.example
+app/data/
+app/config/documents.json
+app/config/*.local.json
+*.sqlite3
+*.db
+*.log
+
+# Private PDF assets and generated work
+app/documents/*.pdf
+**/*.pdf
+source/
+working/
+testing/
+tmp/
+**/testing/
+**/tmp/
+**/qa/
+**/QA/
+output/
+_duplicates/
