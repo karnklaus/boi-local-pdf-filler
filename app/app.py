@@ -156,6 +156,15 @@ FONT_OPTIONS = {
     "tahoma": ("Tahoma", Path(r"C:\Windows\Fonts\tahoma.ttf"), "Tahoma"),
     "arial": ("Arial", Path(r"C:\Windows\Fonts\arial.ttf"), "Arial"),
 }
+FALLBACK_FONT_NAME = "Helvetica"
+for fallback_path in (
+    Path("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+    Path("/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"),
+):
+    if fallback_path.exists():
+        pdfmetrics.registerFont(TTFont("LocalFallback", str(fallback_path)))
+        FALLBACK_FONT_NAME = "LocalFallback"
+        break
 ACCENT_OPTIONS = {
     "purple": {"label": "ม่วง", "color": "#68136f"},
     "blue": {"label": "น้ำเงิน", "color": "#1b5f8a"},
@@ -403,7 +412,7 @@ def format_value(value, key):
 
 def get_font_name(font_key):
     _, font_path, registered_name = FONT_OPTIONS.get(font_key, FONT_OPTIONS[DEFAULT_FONT])
-    return registered_name if font_path.exists() else FONT_OPTIONS[DEFAULT_FONT][2]
+    return registered_name if font_path.exists() else FALLBACK_FONT_NAME
 
 
 def normalize_font_size(value):
