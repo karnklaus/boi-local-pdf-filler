@@ -38,7 +38,3 @@ uvx --from pip-audit pip-audit -r requirements.txt
 ## Security boundary
 
 แอปนี้ออกแบบสำหรับเครื่องส่วนตัวหรือเครื่องที่เชื่อถือได้เท่านั้น ไม่มี authentication สำหรับผู้ใช้ภายนอก และไม่ควร bind ไปที่ `0.0.0.0` หรือ deploy ขึ้น Internet โดยตรง อ่าน [SECURITY.md](SECURITY.md) ก่อนใช้งานกับข้อมูลจริง
-
-## License
-
-Source code เผยแพร่ภายใต้ MIT License ดู [LICENSE](LICENSE)
